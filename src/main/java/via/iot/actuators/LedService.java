@@ -9,8 +9,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LedService {
-    private Context pi4j;
-    private DigitalOutput led;
+    public Context pi4j;
+    public DigitalOutput led;
+    public boolean ledIsOn;
 
     @PostConstruct
     public void initializer() {
@@ -24,8 +25,10 @@ public class LedService {
     }
     public void ledOn() {
         led.high();
+        ledIsOn = true;
     }
     public void ledOff() {
         led.low();
+        ledIsOn = false;
     }
 }
