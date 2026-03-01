@@ -2,6 +2,7 @@ package via.iot.actuators;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import via.iot.api.dto.ServiceDto;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -15,21 +16,23 @@ class LedServiceTests {
         s = new LedService();
         digitalOutput = mock(DigitalOutput.class);
         s.led = digitalOutput;
-        s.ledIsOn = false;
+
+        s.serviceDto = new ServiceDto();
+        s.serviceDto.ledIsOn = false;
     }
 
     @Test
     void ifLedIsOnSetFlagTrue() {
-        s.ledOn();
-        assertTrue(s.ledIsOn);
+        s.setLedOn();
+        assertTrue(s.serviceDto.ledIsOn);
         verify(digitalOutput).high();
     }
 
     @Test
     void ifLedIsOffSetFlagFalse() {
-        s.ledIsOn = false;
-        s.ledOff();
-        assertFalse(s.ledIsOn);
+        s.serviceDto.ledIsOn = false;
+        s.setLedOff();
+        assertFalse(s.serviceDto.ledIsOn);
         verify(digitalOutput).low();
     }
 }

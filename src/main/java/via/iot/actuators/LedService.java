@@ -6,12 +6,13 @@ import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
+import via.iot.api.dto.ServiceDto;
 
 @Component
 public class LedService {
     public Context pi4j;
     public DigitalOutput led;
-    public boolean ledIsOn;
+    public ServiceDto serviceDto = new ServiceDto();
 
     @PostConstruct
     public void initializer() {
@@ -22,13 +23,21 @@ public class LedService {
                 .initial(DigitalState.LOW)
                 .shutdown(DigitalState.LOW)
                 .build());
+
+        serviceDto.ledIsOn = false;
     }
-    public void ledOn() {
+
+    public void setLedOn() {
         led.high();
-        ledIsOn = true;
+        updateLedIsOn(true);
     }
-    public void ledOff() {
+
+    public void setLedOff() {
         led.low();
-        ledIsOn = false;
+        updateLedIsOn(false);
+    }
+
+    public void updateLedIsOn(boolean value) {
+        serviceDto.ledIsOn = value;
     }
 }

@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import via.iot.actuators.LedService;
-import via.iot.api.dto.LedServiceDto;
+import via.iot.api.dto.ServiceDto;
 
 @RestController
 @RequestMapping("/api/led")
@@ -16,25 +16,25 @@ public class LedController {
     }
 
     @PostMapping("/on")
-    public LedServiceDto on() {
-        ledService.ledOn();
-        LedServiceDto dto = new LedServiceDto();
-        dto.ledIsOn = ledService.ledIsOn;
+    public ServiceDto on() {
+        ledService.setLedOn();
+        ServiceDto dto = new ServiceDto();
+        dto.ledIsOn = ledService.serviceDto.ledIsOn;
         return dto;
     }
 
     @PostMapping("/off")
-    public LedServiceDto off() {
-        ledService.ledOff();
-        LedServiceDto dto = new LedServiceDto();
-        dto.ledIsOn = ledService.ledIsOn;
+    public ServiceDto off() {
+        ledService.setLedOff();
+        ServiceDto dto = new ServiceDto();
+        dto.ledIsOn = ledService.serviceDto.ledIsOn;
         return dto;
     }
 
     @GetMapping
-    public LedServiceDto get() {
-        LedServiceDto dto = new LedServiceDto();
-        dto.ledIsOn = ledService.ledIsOn;
+    public ServiceDto get() {
+        ServiceDto dto = new ServiceDto();
+        dto.ledIsOn = ledService.serviceDto.ledIsOn;
         return dto;
     }
 }
