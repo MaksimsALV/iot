@@ -30,21 +30,25 @@ public class ActuatorsController {
 
     @PostMapping
     public ServiceDto post(@RequestBody ServiceDto serviceDto) {
-        if (serviceDto.ledIsOn) {
-            ledService.setLedOn();
-            eventLogger.logEvent(Device.LED.type, Device.LED.name(), "ON");
-        } else {
-            ledService.setLedOff();
-            eventLogger.logEvent(Device.LED.type, Device.LED.name(), "OFF");
+        if (serviceDto.ledIsOn != null) {
+            if (serviceDto.ledIsOn) {
+                ledService.setLedOn();
+                eventLogger.logEvent(Device.LED.type, Device.LED.name(), "ON");
+            } else {
+                ledService.setLedOff();
+                eventLogger.logEvent(Device.LED.type, Device.LED.name(), "OFF");
 
+            }
         }
 
-        if (serviceDto.buzzerIsOn) {
-            buzzerService.setBuzzerOn();
-            eventLogger.logEvent(Device.BUZZER.type, Device.BUZZER.name(), "ON");
-        } else {
-            buzzerService.setBuzzerOff();
-            eventLogger.logEvent(Device.BUZZER.type, Device.BUZZER.name(), "OFF");
+        if (serviceDto.buzzerIsOn != null) {
+            if (serviceDto.buzzerIsOn) {
+                buzzerService.setBuzzerOn();
+                eventLogger.logEvent(Device.BUZZER.type, Device.BUZZER.name(), "ON");
+            } else {
+                buzzerService.setBuzzerOff();
+                eventLogger.logEvent(Device.BUZZER.type, Device.BUZZER.name(), "OFF");
+            }
         }
 
         ServiceDto dto = new ServiceDto();
