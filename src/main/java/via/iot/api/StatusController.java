@@ -11,6 +11,7 @@ import via.iot.api.dto.ServiceDto;
 import via.iot.api.dto.StatusDto;
 import via.iot.sensors.Dht11Service;
 import via.iot.sensors.MotionDetectService;
+import via.iot.sensors.SoundDetectService;
 
 @RestController
 @RequestMapping("/api/status")
@@ -20,13 +21,15 @@ public class StatusController {
     private final MotorService motorService;
     private final Dht11Service dht11Service;
     private final MotionDetectService motionDetectService;
+    private final SoundDetectService soundDetectService;
 
     public StatusController(
             LedService ledService,
             BuzzerService buzzerService,
             MotorService motorService,
             Dht11Service dht11Service,
-            MotionDetectService motionDetectService
+            MotionDetectService motionDetectService,
+            SoundDetectService soundDetectService
 
     ) {
         this.ledService = ledService;
@@ -34,6 +37,7 @@ public class StatusController {
         this.motorService = motorService;
         this.dht11Service = dht11Service;
         this.motionDetectService = motionDetectService;
+        this.soundDetectService = soundDetectService;
     }
 
     @GetMapping
@@ -49,6 +53,7 @@ public class StatusController {
         sensorDto.temperature = dht11Service.sensorDto.temperature;
         sensorDto.humidity = dht11Service.sensorDto.humidity;
         sensorDto.lastMotionDetectedAt = motionDetectService.sensorDto.lastMotionDetectedAt;
+        sensorDto.lastSoundDetectedAt = soundDetectService.sensorDto.lastSoundDetectedAt;
 
         StatusDto dto = new StatusDto();
         dto.actuators = serviceDto;

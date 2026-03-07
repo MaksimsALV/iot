@@ -5,7 +5,8 @@ public enum Device {
     BUZZER("Actuator"),
     MOTOR("Actuator"),
     DHT11("Sensor"),
-    PIR("Sensor");
+    PIR("Sensor"),
+    MIC("Sensor");
 
     public final String type;
     Device(String type) {

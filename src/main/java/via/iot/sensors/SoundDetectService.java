@@ -13,17 +13,17 @@ import via.iot.events.EventLogger;
 import java.time.Instant;
 
 @Component
-public class MotionDetectService {
+public class SoundDetectService {
     public final Context pi4j;
-    public DigitalInput pir;
+    public DigitalInput mic;
     public final EventLogger eventLogger;
     public final LedService ledService;
     public SensorDto sensorDto = new SensorDto();
 
     private boolean readyForNextDetection = true;
-    private Instant motionLedOnUntil;
+    private Instant soundLedOnUntil;
 
-    public MotionDetectService(Context pi4j, EventLogger eventLogger, LedService ledService) {
+    public SoundDetectService(Context pi4j, EventLogger eventLogger, LedService ledService) {
         this.pi4j = pi4j;
         this.eventLogger = eventLogger;
         this.ledService = ledService;
@@ -31,13 +31,13 @@ public class MotionDetectService {
 
     @PostConstruct
     public void initializer() {
-        pir = pi4j.create(DigitalInput.newConfigBuilder(pi4j)
-                .id("pir")
-                .address(22)
+        mic = pi4j.create(DigitalInput.newConfigBuilder(pi4j)
+                .id("mic")
+                .address(6)
                 .pull(PullResistance.PULL_DOWN)
                 .build());
 
-        sensorDto.lastMotionDetectedAt = null;
+        sensorDto.lastSoundDetectedAt = null;
 
         Thread detectorThread = new Thread(() -> {
             while (true) {
@@ -58,12 +58,12 @@ public class MotionDetectService {
     public void read() {
         Instant now = Instant.now();
 
-        if (motionLedOnUntil != null && now.isAfter(motionLedOnUntil)) {
-            ledService.setMotionLedOff();
-            motionLedOnUntil = null;
+        if (soundLedOnUntil != null && now.isAfter(soundLedOnUntil)) {
+            ledService.setSoundLedOff();
+            soundLedOnUntil = null;
         }
 
-        boolean currentState = pir.state().isHigh();
+        boolean currentState = mic.state().isHigh();
 
         if (!currentState) {
             readyForNextDetection = true;
@@ -71,16 +71,16 @@ public class MotionDetectService {
         }
 
         if (readyForNextDetection) {
-            sensorDto.lastMotionDetectedAt = now;
+            sensorDto.lastSoundDetectedAt = now;
 
             eventLogger.logEvent(
-                    Device.PIR.type,
-                    Device.PIR.name(),
-                    "motion detected at " + now
+                    Device.MIC.type,
+                    Device.MIC.name(),
+                    "sound detected at " + now
             );
 
-            ledService.setMotionLedOn();
-            motionLedOnUntil = now.plusSeconds(2);
+            ledService.setSoundLedOn();
+            soundLedOnUntil = now.plusSeconds(2);
             readyForNextDetection = false;
         }
     }
