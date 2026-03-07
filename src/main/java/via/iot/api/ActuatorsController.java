@@ -1,10 +1,12 @@
 package via.iot.api;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import via.iot.actuators.BuzzerService;
 import via.iot.actuators.Device;
 import via.iot.actuators.LedService;
 import via.iot.actuators.ServoService;
+import via.iot.api.dto.ActuatorsRequestDto;
 import via.iot.api.dto.ServiceDto;
 import via.iot.events.EventLogger;
 
@@ -33,37 +35,33 @@ public class ActuatorsController {
     }
 
     @PostMapping
-    public ServiceDto post(@RequestBody ServiceDto serviceDto) {
-        if (serviceDto.ledIsOn != null) {
-            if (serviceDto.ledIsOn) {
+    public ResponseEntity<String> post(@RequestBody ActuatorsRequestDto request) {
+        if (request.led != null) {
+            if ("on".equalsIgnoreCase(request.led)) {
                 ledService.setLedOn();
                 eventLogger.logEvent(Device.LED.type, Device.LED.name(), "ON");
-            } else {
+            } else if ("off".equalsIgnoreCase(request.led)) {
                 ledService.setLedOff();
                 eventLogger.logEvent(Device.LED.type, Device.LED.name(), "OFF");
 
             }
         }
 
-        if (serviceDto.buzzerIsOn != null) {
-            if (serviceDto.buzzerIsOn) {
+        if (request.buzzer != null) {
+            if ("on".equalsIgnoreCase(request.buzzer)) {
                 buzzerService.setBuzzerOn();
                 eventLogger.logEvent(Device.BUZZER.type, Device.BUZZER.name(), "ON");
-            } else {
+            } else if ("off".equalsIgnoreCase(request.buzzer)) {
                 buzzerService.setBuzzerOff();
                 eventLogger.logEvent(Device.BUZZER.type, Device.BUZZER.name(), "OFF");
             }
         }
 
-        if (serviceDto.servoAngle != null) {
-            servoService.setAngle(serviceDto.servoAngle);
-            eventLogger.logEvent(Device.SERVO.type, Device.SERVO.name(), String.valueOf(serviceDto.servoAngle));
+        if (request.motor != null) {
+            servoService.setAngle(request.motor);
+            eventLogger.logEvent(Device.SERVO.type, Device.SERVO.name(), String.valueOf(request.motor));
         }
 
-        ServiceDto dto = new ServiceDto();
-        dto.ledIsOn = ledService.serviceDto.ledIsOn;
-        dto.buzzerIsOn = buzzerService.serviceDto.buzzerIsOn;
-        dto.servoAngle = servoService.serviceDto.servoAngle;
-        return dto;
+        return ResponseEntity.ok("success");
     }
 }
