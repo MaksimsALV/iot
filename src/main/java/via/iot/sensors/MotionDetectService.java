@@ -15,10 +15,10 @@ import java.time.Instant;
 public class MotionDetectService {
     public final Context pi4j;
     public DigitalInput pir;
-    public EventLogger eventLogger;
+    public final EventLogger eventLogger;
     public SensorDto sensorDto = new SensorDto();
 
-    private boolean lastState = false;
+    private boolean readyForNextDetection = true;
 
     public MotionDetectService(Context pi4j, EventLogger eventLogger) {
         this.pi4j = pi4j;
@@ -39,15 +39,22 @@ public class MotionDetectService {
     public void read() {
         boolean currentState = pir.state().isHigh();
 
-        if (currentState && !lastState) {
+        if (!currentState) {
+            readyForNextDetection = true;
+            return;
+        }
+
+        if (readyForNextDetection) {
             Instant now = Instant.now();
             sensorDto.lastMotionDetectedAt = now;
 
-            eventLogger.logEvent(Device.PIR.type, Device.PIR.name(),
+            eventLogger.logEvent(
+                    Device.PIR.type,
+                    Device.PIR.name(),
                     "motion found at " + now
             );
-        }
 
-        lastState = currentState;
+            readyForNextDetection = false;
+        }
     }
 }
