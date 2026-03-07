@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import via.iot.actuators.BuzzerService;
 import via.iot.actuators.Device;
 import via.iot.actuators.LedService;
-import via.iot.actuators.ServoService;
+import via.iot.actuators.MotorService;
 import via.iot.api.dto.SensorDto;
 import via.iot.api.dto.ServiceDto;
 import via.iot.api.dto.StatusDto;
@@ -18,20 +18,20 @@ import via.iot.sensors.Dht11Service;
 public class StatusController {
     private final LedService ledService;
     private final BuzzerService buzzerService;
-    private final ServoService servoService;
+    private final MotorService motorService;
     private final Dht11Service dht11Service;
     private final EventLogger eventLogger;
 
     public StatusController(
             LedService ledService,
             BuzzerService buzzerService,
-            ServoService servoService,
+            MotorService motorService,
             Dht11Service dht11Service,
             EventLogger eventLogger
     ) {
         this.ledService = ledService;
         this.buzzerService = buzzerService;
-        this.servoService = servoService;
+        this.motorService = motorService;
         this.dht11Service = dht11Service;
         this.eventLogger = eventLogger;
     }
@@ -43,7 +43,7 @@ public class StatusController {
         ServiceDto serviceDto = new ServiceDto();
         serviceDto.ledIsOn = ledService.serviceDto.ledIsOn;
         serviceDto.buzzerIsOn = buzzerService.serviceDto.buzzerIsOn;
-        serviceDto.motorIsOn = servoService.serviceDto.motorIsOn;
+        serviceDto.motorIsOn = motorService.serviceDto.motorIsOn;
 
         SensorDto sensorDto = new SensorDto();
         sensorDto.temperature = dht11Service.sensorDto.temperature;

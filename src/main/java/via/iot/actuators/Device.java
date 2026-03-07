@@ -3,7 +3,7 @@ package via.iot.actuators;
 public enum Device {
     LED("Actuator"),
     BUZZER("Actuator"),
-    SERVO("Actuator"),
+    MOTOR("Actuator"),
     DHT11("Sensor");
 
     public final String type;

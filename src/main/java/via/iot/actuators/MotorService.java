@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import via.iot.api.dto.ServiceDto;
 
 @Component
-public class ServoService {
+public class MotorService {
     public ServiceDto serviceDto = new ServiceDto();
     private Process motor;
 
