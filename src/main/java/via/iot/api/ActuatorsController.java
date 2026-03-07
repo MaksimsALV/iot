@@ -48,8 +48,14 @@ public class ActuatorsController {
         }
 
         if (request.motor != null) {
-            servoService.setAngle(request.motor);
-            eventLogger.logEvent(Device.SERVO.type, Device.SERVO.name(), String.valueOf(request.motor));
+            if ("on".equalsIgnoreCase(request.motor)) {
+                servoService.setMotorOn();
+                eventLogger.logEvent(Device.SERVO.type, Device.SERVO.name(), "ON");
+            } else if ("off".equalsIgnoreCase(request.motor)) {
+                servoService.setMotorOff();
+                eventLogger.logEvent(Device.SERVO.type, Device.SERVO.name(), "OFF");
+            }
+
         }
 
         return ResponseEntity.ok("success");

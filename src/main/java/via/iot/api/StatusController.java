@@ -43,7 +43,7 @@ public class StatusController {
         ServiceDto serviceDto = new ServiceDto();
         serviceDto.ledIsOn = ledService.serviceDto.ledIsOn;
         serviceDto.buzzerIsOn = buzzerService.serviceDto.buzzerIsOn;
-        serviceDto.servoAngle = servoService.serviceDto.servoAngle;
+        serviceDto.motorIsOn = servoService.serviceDto.motorIsOn;
 
         SensorDto sensorDto = new SensorDto();
         sensorDto.temperature = dht11Service.sensorDto.temperature;

@@ -1,38 +1,56 @@
 package via.iot.actuators;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.springframework.stereotype.Component;
 import via.iot.api.dto.ServiceDto;
 
 @Component
 public class ServoService {
     public ServiceDto serviceDto = new ServiceDto();
+    private Process motor;
 
     @PostConstruct
     public void initializer() {
-        serviceDto.servoAngle = 90;
+        serviceDto.motorIsOn = false;
     }
 
-    public void setAngle(int angle) {
-        if (angle < 0) angle = 0;
-        if (angle > 180) angle = 180;
+    public void setMotorOn() {
+        if (motor != null && motor.isAlive()) {
+            updateMotorIsOn(true);
+            return;
+        }
 
         try {
-            Process process = new ProcessBuilder(
+            motor = new ProcessBuilder(
                     "python3",
-                    "/opt/iot/servo.py",
-                    String.valueOf(angle)
+                    "/opt/iot/servo.py"
             ).redirectErrorStream(true).start();
 
-            int exitCode = process.waitFor();
-            if (exitCode != 0) {
-                throw new RuntimeException("servo.py failed with exit code " + exitCode);
+            updateMotorIsOn(true);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to start motor", e);
+        }
+    }
+    public void setMotorOff() {
+        try {
+            if (motor != null && motor.isAlive()) {
+                motor.destroy();
+                motor.waitFor();
             }
 
-            serviceDto.servoAngle = angle;
-            System.out.println("Servo moved to " + angle);
+            updateMotorIsOn(false);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to move servo", e);
+            throw new RuntimeException("Failed to stop motor", e);
         }
+    }
+
+    public void updateMotorIsOn(boolean value) {
+        serviceDto.motorIsOn = value;
+    }
+
+    @PreDestroy
+    public void cleanup() {
+        setMotorOff();
     }
 }
