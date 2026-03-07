@@ -5,6 +5,7 @@ import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.springframework.stereotype.Component;
 import via.iot.api.dto.ServiceDto;
 
@@ -13,6 +14,7 @@ public class LedService {
 //    public Context pi4j;
     public final Context pi4j;
     public DigitalOutput led;
+    public DigitalOutput statusLed;
     public ServiceDto serviceDto = new ServiceDto();
 
     public LedService(Context pi4j) {
@@ -26,6 +28,13 @@ public class LedService {
                 .id("led")
                 .address(17)
                 .initial(DigitalState.LOW)
+                .shutdown(DigitalState.LOW)
+                .build());
+
+        statusLed = pi4j.create(DigitalOutput.newConfigBuilder(pi4j)
+                .id("status-led")
+                .address(26)
+                .initial(DigitalState.HIGH)
                 .shutdown(DigitalState.LOW)
                 .build());
 
