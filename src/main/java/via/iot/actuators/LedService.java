@@ -16,6 +16,7 @@ public class LedService {
     public DigitalOutput led;
     public DigitalOutput statusLed;
     public DigitalOutput motionLed;
+    public DigitalOutput soundLed;
     public ServiceDto serviceDto = new ServiceDto();
 
     public LedService(Context pi4j) {
@@ -46,6 +47,13 @@ public class LedService {
                 .shutdown(DigitalState.LOW)
                 .build());
 
+        soundLed = pi4j.create(DigitalOutput.newConfigBuilder(pi4j)
+                .id("sound-led")
+                .address(13)
+                .initial(DigitalState.LOW)
+                .shutdown(DigitalState.LOW)
+                .build());
+
         serviceDto.ledIsOn = false;
     }
 
@@ -65,6 +73,14 @@ public class LedService {
 
     public void setMotionLedOff() {
         motionLed.low();
+    }
+
+    public void setSoundLedOn() {
+        soundLed.high();
+    }
+
+    public void setSoundLedOff() {
+        soundLed.low();
     }
 
     public void updateLedIsOn(boolean value) {
