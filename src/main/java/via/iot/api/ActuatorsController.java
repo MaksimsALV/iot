@@ -7,7 +7,6 @@ import via.iot.actuators.Device;
 import via.iot.actuators.LedService;
 import via.iot.actuators.ServoService;
 import via.iot.api.dto.ActuatorsRequestDto;
-import via.iot.api.dto.ServiceDto;
 import via.iot.events.EventLogger;
 
 @RestController
@@ -23,15 +22,6 @@ public class ActuatorsController {
         this.buzzerService = buzzerService;
         this.servoService = servoService;
         this.eventLogger = eventLogger;
-    }
-
-    @GetMapping
-    public ServiceDto get() {
-        ServiceDto dto = new ServiceDto();
-        dto.ledIsOn = ledService.serviceDto.ledIsOn;
-        dto.buzzerIsOn = buzzerService.serviceDto.buzzerIsOn;
-        dto.servoAngle = servoService.serviceDto.servoAngle;
-        return dto;
     }
 
     @PostMapping
