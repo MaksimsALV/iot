@@ -39,7 +39,6 @@ public class StatusController {
     @GetMapping
     public StatusDto get() {
         dht11Service.read();
-        motionDetectService.read();
 
         ServiceDto serviceDto = new ServiceDto();
         serviceDto.ledIsOn = ledService.serviceDto.ledIsOn;
