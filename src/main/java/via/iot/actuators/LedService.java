@@ -10,13 +10,18 @@ import via.iot.api.dto.ServiceDto;
 
 @Component
 public class LedService {
-    public Context pi4j;
+//    public Context pi4j;
+    public final Context pi4j;
     public DigitalOutput led;
     public ServiceDto serviceDto = new ServiceDto();
 
+    public LedService(Context pi4j) {
+        this.pi4j = pi4j;
+    }
+
     @PostConstruct
     public void initializer() {
-        pi4j = Pi4J.newAutoContext();
+//        pi4j = Pi4J.newAutoContext();
         led = pi4j.create(DigitalOutput.newConfigBuilder(pi4j)
                 .id("led")
                 .address(17)

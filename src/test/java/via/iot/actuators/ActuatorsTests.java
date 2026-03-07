@@ -1,5 +1,6 @@
 package via.iot.actuators;
 
+import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,11 +19,12 @@ class ActuatorsTests {
     public DigitalOutput buzzerDigitalOutput;
 
     public ServiceDto serviceDto;
+    public Context pi4j;
 
     @BeforeEach
     void actuatorsInit() {
-        ledService = new LedService();
-        buzzerService = new BuzzerService();
+        ledService = new LedService(pi4j);
+        buzzerService = new BuzzerService(pi4j);
 
         ledDigitalOutput = mock(DigitalOutput.class);
         buzzerDigitalOutput = mock(DigitalOutput.class);

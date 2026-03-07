@@ -28,6 +28,7 @@
     </scm>
     <properties>
         <java.version>21</java.version>
+        <pi4j.version>2.6.0</pi4j.version>
     </properties>
     <dependencies>
         <dependency>
@@ -45,17 +46,22 @@
         <dependency>
             <groupId>com.pi4j</groupId>
             <artifactId>pi4j-core</artifactId>
-            <version>2.5.1</version>
+            <version>${pi4j.version}</version>
         </dependency>
         <dependency>
             <groupId>com.pi4j</groupId>
             <artifactId>pi4j-plugin-raspberrypi</artifactId>
-            <version>2.5.1</version>
+            <version>${pi4j.version}</version>
         </dependency>
         <dependency>
             <groupId>com.pi4j</groupId>
             <artifactId>pi4j-plugin-gpiod</artifactId>
-            <version>2.5.1</version>
+            <version>${pi4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-plugin-linuxfs</artifactId>
+            <version>${pi4j.version}</version>
         </dependency>
 
         <!--postgres-->

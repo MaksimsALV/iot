@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import via.iot.actuators.BuzzerService;
 import via.iot.actuators.Device;
 import via.iot.actuators.LedService;
+import via.iot.actuators.ServoService;
 import via.iot.api.dto.ServiceDto;
 import via.iot.events.EventLogger;
 
@@ -12,11 +13,13 @@ import via.iot.events.EventLogger;
 public class ActuatorsController {
     private final LedService ledService;
     private final BuzzerService buzzerService;
+    private final ServoService servoService;
     private final EventLogger eventLogger;
 
-    public ActuatorsController(LedService ledService, BuzzerService buzzerService, EventLogger eventLogger) {
+    public ActuatorsController(LedService ledService, BuzzerService buzzerService, ServoService servoService, EventLogger eventLogger) {
         this.ledService = ledService;
         this.buzzerService = buzzerService;
+        this.servoService = servoService;
         this.eventLogger = eventLogger;
     }
 
@@ -25,6 +28,7 @@ public class ActuatorsController {
         ServiceDto dto = new ServiceDto();
         dto.ledIsOn = ledService.serviceDto.ledIsOn;
         dto.buzzerIsOn = buzzerService.serviceDto.buzzerIsOn;
+        dto.servoAngle = servoService.serviceDto.servoAngle;
         return dto;
     }
 
@@ -51,9 +55,15 @@ public class ActuatorsController {
             }
         }
 
+        if (serviceDto.servoAngle != null) {
+            servoService.setAngle(serviceDto.servoAngle);
+            eventLogger.logEvent(Device.SERVO.type, Device.SERVO.name(), String.valueOf(serviceDto.servoAngle));
+        }
+
         ServiceDto dto = new ServiceDto();
         dto.ledIsOn = ledService.serviceDto.ledIsOn;
         dto.buzzerIsOn = buzzerService.serviceDto.buzzerIsOn;
+        dto.servoAngle = servoService.serviceDto.servoAngle;
         return dto;
     }
 }

@@ -10,13 +10,18 @@ import via.iot.api.dto.ServiceDto;
 
 @Component
 public class BuzzerService {
-    public Context pi4j;
+//    public Context pi4j;
+    public final Context pi4j;
     public DigitalOutput buzzer;
     public ServiceDto serviceDto = new ServiceDto();
 
+    public BuzzerService(Context pi4j) {
+        this.pi4j = pi4j;
+    }
+
     @PostConstruct
     public void initializer() {
-        pi4j = Pi4J.newAutoContext();
+//        pi4j = Pi4J.newAutoContext();
         buzzer = pi4j.create(DigitalOutput.newConfigBuilder(pi4j)
                 .id("buzzer")
                 .address(27)
