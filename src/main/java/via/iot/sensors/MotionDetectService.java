@@ -38,10 +38,26 @@ public class MotionDetectService {
                 .build());
 
         sensorDto.lastMotionDetectedAt = null;
+
+        Thread detectorThread = new Thread(() -> {
+            while (true) {
+                try {
+                    read();
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        });
+
+        detectorThread.setDaemon(true);
+        detectorThread.start();
     }
 
     public void read() {
         Instant now = Instant.now();
+
         if (motionLedOnUntil != null && now.isAfter(motionLedOnUntil)) {
             ledService.setMotionLedOff();
             motionLedOnUntil = null;
