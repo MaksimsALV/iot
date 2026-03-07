@@ -11,35 +11,30 @@ import java.nio.file.Path;
 public class Dht11Service {
     public SensorDto sensorDto = new SensorDto();
 
-    private static final Path TEMP_PATH =
+    public static final Path TEMP_PATH =
             Path.of("/sys/bus/iio/devices/iio:device0/in_temp_input");
 
-    private static final Path HUMIDITY_PATH =
+    public static final Path HUMIDITY_PATH =
             Path.of("/sys/bus/iio/devices/iio:device0/in_humidityrelative_input");
 
     public void read() {
-        RuntimeException lastException = null;
+        Double temperature = tryReadValue(TEMP_PATH);
+        Double humidity = tryReadValue(HUMIDITY_PATH);
 
-        for (int i = 0; i < 5; i++) {
-            try {
-                int tempRaw = Integer.parseInt(Files.readString(TEMP_PATH).trim());
-                int humidityRaw = Integer.parseInt(Files.readString(HUMIDITY_PATH).trim());
-
-                sensorDto.temperature = tempRaw / 1000.0;
-                sensorDto.humidity = humidityRaw / 1000.0;
-                return;
-            } catch (IOException | NumberFormatException e) {
-                lastException = new RuntimeException("Failed to read DHT11", e);
-
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                    throw new RuntimeException("DHT11 read interrupted", ex);
-                }
-            }
+        if (temperature != null) {
+            sensorDto.temperature = temperature;
         }
 
-        throw lastException;
+        if (humidity != null) {
+            sensorDto.humidity = humidity;
+        }
+    }
+
+    private Double tryReadValue(Path path) {
+        try {
+            return Integer.parseInt(Files.readString(path).trim()) / 1000.0;
+        } catch (IOException | NumberFormatException e) {
+            return null;
+        }
     }
 }
