@@ -6,6 +6,7 @@ import com.pi4j.io.gpio.digital.PullResistance;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 import via.iot.actuators.Device;
+import via.iot.actuators.LedService;
 import via.iot.api.dto.SensorDto;
 import via.iot.events.EventLogger;
 
@@ -16,13 +17,16 @@ public class MotionDetectService {
     public final Context pi4j;
     public DigitalInput pir;
     public final EventLogger eventLogger;
+    public final LedService ledService;
     public SensorDto sensorDto = new SensorDto();
 
     private boolean readyForNextDetection = true;
+    private Instant motionLedOnUntil;
 
-    public MotionDetectService(Context pi4j, EventLogger eventLogger) {
+    public MotionDetectService(Context pi4j, EventLogger eventLogger, LedService ledService) {
         this.pi4j = pi4j;
         this.eventLogger = eventLogger;
+        this.ledService = ledService;
     }
 
     @PostConstruct
@@ -37,6 +41,12 @@ public class MotionDetectService {
     }
 
     public void read() {
+        Instant now = Instant.now();
+        if (motionLedOnUntil != null && now.isAfter(motionLedOnUntil)) {
+            ledService.setMotionLedOff();
+            motionLedOnUntil = null;
+        }
+
         boolean currentState = pir.state().isHigh();
 
         if (!currentState) {
@@ -45,7 +55,6 @@ public class MotionDetectService {
         }
 
         if (readyForNextDetection) {
-            Instant now = Instant.now();
             sensorDto.lastMotionDetectedAt = now;
 
             eventLogger.logEvent(
@@ -54,6 +63,8 @@ public class MotionDetectService {
                     "motion found at " + now
             );
 
+            ledService.setMotionLedOn();
+            motionLedOnUntil = now.plusSeconds(2);
             readyForNextDetection = false;
         }
     }

@@ -15,6 +15,7 @@ public class LedService {
     public final Context pi4j;
     public DigitalOutput led;
     public DigitalOutput statusLed;
+    public DigitalOutput motionLed;
     public ServiceDto serviceDto = new ServiceDto();
 
     public LedService(Context pi4j) {
@@ -38,6 +39,13 @@ public class LedService {
                 .shutdown(DigitalState.LOW)
                 .build());
 
+        motionLed = pi4j.create(DigitalOutput.newConfigBuilder(pi4j)
+                .id("motion-led")
+                .address(19)
+                .initial(DigitalState.LOW)
+                .shutdown(DigitalState.LOW)
+                .build());
+
         serviceDto.ledIsOn = false;
     }
 
@@ -49,6 +57,14 @@ public class LedService {
     public void setLedOff() {
         led.low();
         updateLedIsOn(false);
+    }
+
+    public void setMotionLedOn() {
+        motionLed.high();
+    }
+
+    public void setMotionLedOff() {
+        motionLed.low();
     }
 
     public void updateLedIsOn(boolean value) {
