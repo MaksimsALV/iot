@@ -14,14 +14,14 @@ import java.time.Instant;
 
 @Component
 public class SoundDetectService {
-    public final Context pi4j;
-    public DigitalInput mic;
-    public final EventLogger eventLogger;
-    public final LedService ledService;
+    private final Context pi4j;
+    private final EventLogger eventLogger;
+    private final LedService ledService;
+
+    private DigitalInput mic;
     public SensorDto sensorDto = new SensorDto();
 
-    private boolean readyForNextDetection = true;
-    private Instant soundLedOnUntil;
+    private Instant lastDetectionTime = Instant.EPOCH;
 
     public SoundDetectService(Context pi4j, EventLogger eventLogger, LedService ledService) {
         this.pi4j = pi4j;
@@ -56,21 +56,14 @@ public class SoundDetectService {
     }
 
     public void read() {
-        Instant now = Instant.now();
+        if (mic.state().isHigh()) {
+            Instant now = Instant.now();
 
-        if (soundLedOnUntil != null && now.isAfter(soundLedOnUntil)) {
-            ledService.setSoundLedOff();
-            soundLedOnUntil = null;
-        }
+            if (now.isBefore(lastDetectionTime.plusSeconds(2))) {
+                return;
+            }
 
-        boolean currentState = mic.state().isHigh();
-
-        if (!currentState) {
-            readyForNextDetection = true;
-            return;
-        }
-
-        if (readyForNextDetection) {
+            lastDetectionTime = now;
             sensorDto.lastSoundDetectedAt = now;
 
             eventLogger.logEvent(
@@ -80,8 +73,15 @@ public class SoundDetectService {
             );
 
             ledService.setSoundLedOn();
-            soundLedOnUntil = now.plusSeconds(2);
-            readyForNextDetection = false;
+
+            new Thread(() -> {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                ledService.setSoundLedOff();
+            }).start();
         }
     }
 }
